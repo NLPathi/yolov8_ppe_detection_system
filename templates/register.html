@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Register - PPE Detection{% endblock %}
+
+{% block content %}
+<div class="container-fluid bg-register">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm mt-5">
+                <div class="card-header text-center bg-dark text-white">
+                    <h2>Register for PPE Detection</h2>
+                </div>
+                <div class="card-body bg-light">
+                    <!-- The action now points to /register for POST request -->
+                    <form method="POST" action="/register">
+                        <div class="form-group">
+                            <label for="firstname">First Name</label>
+                            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter your first name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname">Last Name</label>
+                            <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter your last name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Create a password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                    </form>
+                    <p class="text-center mt-4">
+                        Already have an account? <a href="{{ url_for('login') }}" class="text-primary">Log in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-register {
+        background-color: #f4f4f9;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .card {
+        border: none;
+        border-radius: 8px;
+    }
+    .btn-primary {
+        background-color: #457b9d;
+        border-color: #457b9d;
+    }
+    .btn-primary:hover {
+        background-color: #1d3557;
+        border-color: #1d3557;
+    }
+</style>
+{% endblock %}

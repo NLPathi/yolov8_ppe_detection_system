@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Video Stream</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #eaeaea; /* Light gray background */
+            color: #2c3e50; /* Darker text color for better readability */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        h1 {
+            color: #e74c3c; /* Red color for the title */
+            font-size: 2.5em;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .stream-container {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #95a5a6; /* Lighter gray color for footer */
+        }
+    </style>
+</head>
+<body>
+    <h1>Weapon Detection Live Video Stream</h1>
+    <div class="stream-container">
+        <img src="{{ url_for('video_feed') }}" alt="PPE Detection Live Stream">
+    </div>
+    <footer>
+        &copy; 2024 My Stream App. All rights reserved.
+    </footer>
+</body>
+</html>

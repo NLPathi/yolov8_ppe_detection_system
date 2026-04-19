@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block title %}Model Inference{% endblock %}
+
+{% block content %}
+<div class="container-fluid bg-light p-5" style="min-height: 100vh;">
+    <div class="row justify-content-center align-items-center" style="height: 100%;">
+
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded-3 border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h1>Welcome to the Model Inference</h1>
+                </div>
+                <div class="card-body p-5">
+                    <!-- Go to Home Button -->
+                    <a class="btn btn-outline-primary mb-4 w-100" href="/hero">Go to Home</a>
+
+                    <!-- Upload Form -->
+                    <form id="uploadForm" class="text-center">
+                        <!-- File Upload Section -->
+                        <div class="form-group mb-5">
+                            <label for="fileUpload" class="form-label fw-bold text-secondary">Upload
+                                Image/Video:</label>
+                            <input type="file" id="fileUpload" name="file"
+                                class="form-control border-primary text-center" accept="image/*, video/*"
+                                onchange="previewFile()">
+                        </div>
+
+                        <!-- Preview Section (Original Image/Video) -->
+                        <div id="previewSection" class="text-center mb-4" style="display: none;">
+                            <h5 class="text-info">Original Upload:</h5>
+                            <div id="previewContainer"></div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-4">
+                            <button type="button" class="btn btn-success btn-lg w-50"
+                                onclick="uploadAndPredict()"> Submit and Predict</button>
+                        </div>
+                    </form>
+
+                    <!-- Output Section -->
+                    <div id="outputSection" class="mt-5 text-center" style="display: none;">
+                        <div id="resultPreview" class="mb-4"></div>
+                        <div id="resultsSection"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    body {
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .container-fluid {
+        padding: 0;
+        height: 100vh;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border-radius: 15px;
+    }
+
+    .card-header {
+        background-color: #007bff;
+        border-bottom: 3px solid #0056b3;
+    }
+
+    .btn-outline-primary {
+        border-color: #007bff;
+        color: #007bff;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    #previewContainer img,
+    #previewContainer video {
+        max-width: 100%;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+    }
+
+    .form-group {
+        text-align: center;
+    }
+
+    #previewSection {
+        display: flex;
+        justify-content: center;
+    }
+
+    #fileUpload {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #previewSection h5,
+    #resultsSection {
+        margin-top: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .mb-4 {
+        margin-bottom: 1.5rem;
+    }
+
+    .mt-4 {
+        margin-top: 1.5rem;
+    }
+
+    .mt-5 {
+        margin-top: 3rem;
+    }
+
+    .p-5 {
+        padding: 3rem;
+    }
+
+</style>
+
+<!-- JavaScript for File Upload and Prediction -->
+<script>
+function previewFile() {
+    const fileInput = document.getElementById("fileUpload");
+    const previewSection = document.getElementById("previewSection");
+    const previewContainer = document.getElementById("previewContainer");
+
+    if (!fileInput.files.length) {
+        previewSection.style.display = "none";
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const fileType = file.type.split("/")[0];
+
+    previewContainer.innerHTML = ""; // Clear previous preview
+    previewSection.style.display = "block"; // Show preview section
+
+    if (fileType === "image") {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            previewContainer.innerHTML = `<img src="${e.target.result}" class="img-fluid">`;
+        };
+        reader.readAsDataURL(file);
+    } 
+}
+
+function uploadAndPredict() {
+    const fileInput = document.getElementById("fileUpload");
+    const outputSection = document.getElementById("outputSection");
+    const resultsSection = document.getElementById("resultsSection");
+    const resultPreview = document.getElementById("resultPreview");
+
+    if (!fileInput.files.length) {
+        alert("Please upload an image or video file.");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+
+    outputSection.style.display = "none";
+    resultsSection.innerHTML = "";
+    resultPreview.innerHTML = "";
+
+    const fileType = file.type.split("/")[0];
+
+    fetch('/predict', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            displayOutput(file, data);
+        }
+    })
+    .catch(error => console.error('Error during prediction:', error));
+}
+
+function displayOutput(file, data) {
+    const outputSection = document.getElementById("outputSection");
+    const resultPreview = document.getElementById("resultPreview");
+    const resultsSection = document.getElementById("resultsSection");
+
+    outputSection.style.display = "block";
+    resultsSection.innerHTML = "";  // Clear previous results
+
+    const fileType = file.type.split("/")[0];
+
+    resultPreview.innerHTML = "";  // Clear old result preview
+
+    if (data.predictions) {
+        let predictionsHTML = "<h5 class='text-info'>Predictions:</h5><ul>";
+        for (let key in data.predictions) {
+            if (data.predictions.hasOwnProperty(key)) {
+                predictionsHTML += `<li><strong>${key.replace(/_/g, " ")}</strong>: ${data.predictions[key]}</li>`;
+            }
+        }
+        predictionsHTML += "</ul>";
+        resultsSection.innerHTML = predictionsHTML;
+    }
+
+    if (fileType === "image") {
+        if (data.processed_image) {
+            resultPreview.innerHTML = `<img src="${data.processed_image}" class="img-fluid">`;
+        } 
+    }
+}
+</script>
+
+{% endblock %}
