@@ -16,7 +16,8 @@ It ensures accurate PPE compliance detection in industrial and construction envi
 * 🔍 PPE detection in both images and videos
 * 🤖 Vision Language Model for intelligent image understanding
 * 🎯 YOLOv8-based real-time object detection
-* 👥 Multi-object tracking using SORT algorithm
+* 👥 Multi-object tracking using SORT
+* 🚀 Model trained using Google Colab Cloud Platform.
 * 🌐 Web interface using Flask
 * ⚡ Fast and scalable safety monitoring system
 
